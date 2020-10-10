@@ -14,6 +14,7 @@ import usersData from './domain/userData';
 
 const app = () => {
 
+  const scrowOffset = useRef(new Animated.Value(0)).current;
   const [userSelected, SetUserSelected] = useState();
   const [userInfoVisible, SetUserInfoVisible] = useState();
   const [users] = useState([...usersData]);
@@ -39,7 +40,18 @@ const app = () => {
 
   renderList = () => (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView
+        scrollEventThrottle={16}
+        onScroll={Animated.event([{
+          nativeEvent: {
+            contentOffset: { y: scrowOffset }
+          }
+        }],
+          {
+            useNativeDriver: false,
+            isInteraction: false
+          })}
+      >
         {users.map(user =>
           <User
             key={user.id}
@@ -57,13 +69,32 @@ const app = () => {
         barStyle="light-content"
         translucent
         backgroundColor="transparent" />
-      <View style={styles.header}>
+      <Animated.View
+        style={[
+          styles.header,
+          {
+            height: scrowOffset.interpolate({
+              inputRange: [0, 140],
+              outputRange: [200, 70],
+              extrapolate: 'clamp',
+            })
+          }
+        ]}
+      >
         <Image
           source={userSelected ? { uri: userSelected.thumbnail } : null}
           style={styles.headerImage}
         />
-        <Text style={styles.HeaderText}>{userSelected ? userSelected.name : 'GoNative'}</Text>
-      </View>
+        <Animated.Text style={[styles.HeaderText,
+         {
+          fontSize: scrowOffset.interpolate({
+            inputRange: [120, 140],
+            outputRange: [24, 16],
+            extrapolate: 'clamp',
+          })
+        }
+      ]}>{userSelected ? userSelected.name : 'GoNative'}</Animated.Text>
+      </Animated.View>
 
       {userInfoVisible ? renderDetail() : renderList()}
     </View>
@@ -79,7 +110,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     backgroundColor: '#2E93E5',
-    height: 200
   },
   headerImage: {
     position: 'absolute',
@@ -89,7 +119,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   HeaderText: {
-    fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
     backgroundColor: 'transparent',
