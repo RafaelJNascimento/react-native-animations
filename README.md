@@ -6,10 +6,11 @@
 - JavaScript
 - React Native
 
-
 ## Sobre
 
 Esse projeto tem objetivo de melhorar um projeto do curso da rocketseat, atualizando o código, de tal forma a mostrar as animações feitas com a api do react native.
+
+<img src="https://github.com/RafaelJNascimento/react-native-animations/blob/master/public/projeto.gif" width="450">
 
 
 ## Como Testar
